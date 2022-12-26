@@ -1,6 +1,7 @@
 services:
     hemmelig:
-        image: hemmeligapp/hemmelig:latest
+        #image: hemmeligapp/hemmelig:latest
+        build: .
         hostname: hemmelig
         init: true
         volumes:
