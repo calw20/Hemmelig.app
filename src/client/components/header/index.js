@@ -58,34 +58,18 @@ const Header = () => {
 
                 {!isLoggedIn && !config.get('settings.disableUsers') && (
                     <>
-                        <Grid.Col span={4}>
+                        <Grid.Col span={8}>
                             <Group position="right">
-                                <Button
-                                    variant="subtle"
-                                    color="hemmelig"
-                                    component={Link}
-                                    to="/signin"
-                                >
-                                    {t('sign_in')}
-                                </Button>
-                            </Group>
-                        </Grid.Col>
-
-                        <Grid.Col span={4}>
-                            <Group position="right">
-                                <Button
-                                    color="hemmelig"
-                                    leftIcon={<IconLogin size={14} />}
-                                    component={Link}
-                                    to="/signup"
-                                >
-                                    {t('sign_up')}
-                                </Button>
+                                <a href="/signin">
+                                    <Button color="hemmelig" leftIcon={<IconLogin size={14} />}>
+                                        {t('sign_in')}
+                                    </Button>
+                                </a>
                             </Group>
                         </Grid.Col>
                     </>
                 )}
-                {onSignOutRedirect && <Redirect to="/signin" />}
+                {onSignOutRedirect && <Redirect to="/" />}
             </Grid>
         </Container>
     );

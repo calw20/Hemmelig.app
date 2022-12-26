@@ -23,6 +23,7 @@ async function account(fastify) {
         }
     );
 
+    /* SSO Has no use for updating info
     fastify.put(
         '/update',
         {
@@ -49,8 +50,9 @@ async function account(fastify) {
                     .code(401)
                     .send({ type: 'currentPassword', error: 'Incorrect password' });
             }
-
-            if (newPassword) {
+            
+            //Password updating not a thing
+            if (newPassword && false) {
                 if (newPassword.length < PASSWORD_LENGTH) {
                     return reply.code(403).send({
                         type: 'newPassword',
@@ -96,7 +98,7 @@ async function account(fastify) {
                 },
             };
         }
-    );
+    );*/
 
     fastify.post(
         '/delete',

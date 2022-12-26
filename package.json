@@ -37,6 +37,7 @@
     "@fastify/cors": "^8.1.0",
     "@fastify/helmet": "^9.1.0",
     "@fastify/multipart": "^7.1.1",
+    "@fastify/oauth2": "^7.0.0",
     "@fastify/static": "^6.5.0",
     "@mantine/core": "^5.1.7",
     "@mantine/form": "^5.2.0",

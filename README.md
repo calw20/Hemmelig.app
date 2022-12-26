@@ -1,21 +1,16 @@
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=HemmeligOrg_Hemmelig.app&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=HemmeligOrg_Hemmelig.app)
-[![Better Uptime Badge](https://betteruptime.com/status-badges/v1/monitor/he71.svg)](https://betteruptime.com/?utm_source=status_badge)
-
 <div align="center">
   <img src="banner.png" alt="hemmelig" />
 </div>
 
-<h1 align="center">Free encrypted secret sharing for everyone!</h1>
+<h1 align="center">Free encrypted secret sharing for everyone! - With SSO Support!</h1>
 
 <div align="center">
   This application is to be used to share encrypted secrets cross organizations, or as private persons. Hemmelig truly cares about your privacy, and will do everything to stay that way. I hope you enjoy the product.
 </div>
 
-
-
 ## SaaS
 
-Hemmelig is available at [https://hemmelig.app](https://hemmelig.app)
+The original Hemmelig app is available at [https://hemmelig.app](https://hemmelig.app)
 
 ![Desktop](desktop.png)
 
@@ -25,8 +20,12 @@ Hemmelig is available at [https://hemmelig.app](https://hemmelig.app)
 You enter [https://hemmelig.app](https://hemmelig.app), write your sensitive information, expire time, optional password, and click create a secret link. You share the secret link. The receiver of the link opens it, writes the optional password, and retrieves the sensitive information.
 When a secret link is created, it gets its unique encryption key that is not saved to the database and only will be part of the URL. This is how the encryption works: `encrypt(DATA, YOUR_UNIQUE_ENCRYPTION_KEY)`. The encryption of the text and files is done in the client; this means the server will get the encrypted information, and nothing in clear text.
 
-## Features
+This build uses [https://github.com/fastify/fastify-oauth2](fastify-oauth2) to handle authentication with all the original signup and signin ability removed. If you enable users, you will need to define the SSO Environment variables.
 
+NOTE: I built this in half a day, I can not vouch for this codebase's security. I have made every effort to ensure it is safe and secure but am no expert. If you find an issue please do feel free to submit a pull request!   
+
+## Features
+- OpenID Connect SSO Support! 
 - Client side encryption
 - Encrypted sensitive information sharing
 - Encrypted file upload for signed in users
@@ -40,18 +39,6 @@ When a secret link is created, it gets its unique encryption key that is not sav
 - It will detect if the secret is base64 encoded, and add a button to convert it to plain text on read
 - Self-hosted version. Keywords: Regulatory compliance
 - CLI Support
-
-## Linode Referral
-
-Hemmelig.app is running on Linode, and is not being sponsored by anyone. If you want to support Hemmelig, and use Linode. Here is a referral link that we get free credit if you use. By using this link you will get $100 of credit as well: [https://www.linode.com/lp/refer/?r=a47390eeafc5a46b8e5407a5d2bf28368d474993](https://www.linode.com/lp/refer/?r=a47390eeafc5a46b8e5407a5d2bf28368d474993)
-
-## Docker image
-
-- hemmeligapp/hemmelig:bleeding-edge (pushed on every commit to main)
-- hemmeligapp/hemmelig:weekly (pushed every week on Friday)
-- hemmeligapp/hemmelig:daily
-- hemmeligapp/hemmelig:v3.4.0 (see the github tags)
-- hemmeligapp/hemmelig:latest (pushed on releases)
 
 ## Self-hosting
 
@@ -120,6 +107,21 @@ npx hemmelig --help
 | `SECRET_DO_SPACES_SECRET`     | The Digital Ocean Spaces/AWS s3 secret                                | ""                 |
 | `SECRET_DO_SPACES_BUCKET`     | The Digital Ocean Spaces/AWS s3 bucket name                           | ""                 |
 | `SECRET_DO_SPACES_FOLDER`     | The Digital Ocean Spaces/AWS s3 folder for the uploaded files         | ""                 |
+| `CLIENT_ID`                   | OpenID Connect Client ID                                              |
+""                 |
+| `CLIENT_SECRET`               | OpenID Connect Client Secret                                          |
+""                 |
+| `AUTH_HOST`                   | Authentication Host                                                   |
+""                 |
+| `AUTH_PATH`                   | Authentication Path                                                   |
+""                 |
+| `TOKEN_HOST`                  | Token Host                                                            |
+""                 |
+| `TOKEN_PATH`                  | Token Path                                                            |
+""                 |
+| `OAUTH_CALLBACK_HOST`         | oAuth Callback Host                                                   |
+""                 |
+
 
 ## Supported languages
 

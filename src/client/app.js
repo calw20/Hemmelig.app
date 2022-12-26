@@ -19,8 +19,6 @@ const HeaderContent = lazy(() => import('./components/header'));
 const Home = lazy(() => import('./routes/home'));
 const Secret = lazy(() => import('./routes/secret'));
 const Privacy = lazy(() => import('./routes/privacy'));
-const SignIn = lazy(() => import('./routes/signin'));
-const SignUp = lazy(() => import('./routes/signup'));
 const Account = lazy(() => import('./routes/account'));
 const Terms = lazy(() => import('./routes/terms'));
 
@@ -81,15 +79,16 @@ const App = () => {
                                 <Group position="center" spacing="xs">
                                     {!config.get('settings.disableUsers') && (
                                         <>
-                                            <Anchor
-                                                component={Link}
-                                                to="/signin"
-                                                color="dimmed"
-                                                size="xs"
-                                                transform="uppercase"
-                                            >
-                                                {t('sign_in')}
-                                            </Anchor>
+                                            <a href="/signin">
+                                                <Anchor
+                                                    component={Link}
+                                                    color="dimmed"
+                                                    size="xs"
+                                                    transform="uppercase"
+                                                >
+                                                    {t('sign_in')}
+                                                </Anchor>
+                                            </a>
                                             |
                                             <Anchor
                                                 component={Link}
@@ -158,12 +157,6 @@ const App = () => {
                         <Switch>
                             <Route path="/secret/:encryptionKey/:secretId" exact>
                                 <Secret />
-                            </Route>
-                            <Route path="/signin" exact>
-                                <SignIn />
-                            </Route>
-                            <Route path="/signup" exact>
-                                <SignUp />
                             </Route>
                             <Route path="/privacy" exact>
                                 <Privacy />

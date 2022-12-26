@@ -1,15 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-    Container,
-    TextInput,
-    PasswordInput,
-    Stack,
-    Text,
-    Button,
-    Group,
-    Tabs,
-} from '@mantine/core';
-import { useForm } from '@mantine/form';
+import { Container, Stack, Text, Button, Group, Tabs } from '@mantine/core';
 import { openConfirmModal } from '@mantine/modals';
 import { IconUser, IconAt, IconLock, IconTrash, IconSettings, IconEdit } from '@tabler/icons';
 import { Redirect } from 'react-router-dom';
@@ -35,19 +25,6 @@ const Account = () => {
 
     const dispatch = useDispatch();
 
-    const form = useForm({
-        initialValues: {
-            currentPassword: '',
-            newPassword: '',
-            email: '',
-            confirmNewPassword: '',
-        },
-        validate: {
-            confirmNewPassword: (value, values) =>
-                value !== values.newPassword ? 'Passwords did not match' : null,
-        },
-    });
-
     useEffect(() => {
         if (!token) {
             return;
@@ -71,8 +48,6 @@ const Account = () => {
 
                 setUser(user);
 
-                form.setValues({ email: user.email });
-
                 setError(null);
             } catch (e) {
                 setError(e);
@@ -87,7 +62,7 @@ const Account = () => {
     }
 
     if (!token) {
-        return <Redirect to="/signin" />;
+        return <Redirect to="/" />;
     }
 
     if (loading) {
@@ -112,44 +87,6 @@ const Account = () => {
         setToken('');
     };
 
-    const onProfileUpdate = async (e) => {
-        e.preventDefault();
-
-        setActiveTab('settings');
-
-        const values = form.values;
-
-        try {
-            setLoading(true);
-
-            const response = await updateUser(values, token);
-
-            setLoading(false);
-
-            if (response.statusCode === 401 || response.statusCode === 500) {
-                setError(response.error ? response.error : 'Could not update your user profile');
-
-                return;
-            }
-
-            const { user, error, type } = response;
-
-            if (error) {
-                if (type === 'no-data') {
-                    form.setErrors({ email: error });
-                } else {
-                    form.setErrors({ [type]: error });
-                }
-            } else {
-                setUser(user);
-
-                form.setValues({ email: user.email });
-            }
-        } catch (e) {
-            setError(e);
-        }
-    };
-
     const openDeleteModal = () =>
         openConfirmModal({
             title: 'Delete your profile',
@@ -167,15 +104,13 @@ const Account = () => {
                     <Tabs.Tab value="account" icon={<IconUser size={14} />}>
                         {t('account')}
                     </Tabs.Tab>
-                    <Tabs.Tab value="settings" icon={<IconSettings size={14} />}>
-                        {t('settings')}
-                    </Tabs.Tab>
                 </Tabs.List>
 
                 <Tabs.Panel value="account" pt="xs">
                     <Stack>
                         <Text size="sm">
-                            Hi, <strong>{user.username}</strong>
+                            Hi, <strong>{user.username}</strong> (
+                            <a href={'mailto:' + user.email}>{user.email}</a>)
                         </Text>
 
                         <Text size="sm">
@@ -194,7 +129,9 @@ const Account = () => {
                         <Text size="sm">
                             If you do not feel to be part of the Hemmelig.app journey anymore. Feel
                             free to delete your profile. Hemmelig will remove all the information
-                            connected to your account!
+                            connected to your account! Do note however that if you login again, a
+                            new account will be generated in Hemmelig with the SSO detailed
+                            provided.
                         </Text>
 
                         <Group position="right">
@@ -208,50 +145,6 @@ const Account = () => {
                             </Button>
                         </Group>
                     </Stack>
-                </Tabs.Panel>
-
-                <Tabs.Panel value="settings" pt="xs">
-                    <Container size="xs">
-                        <Stack>
-                            <TextInput
-                                label="Email"
-                                icon={<IconAt size={14} />}
-                                placeholder="Email"
-                                {...form.getInputProps('email')}
-                            />
-
-                            <PasswordInput
-                                label="Current password"
-                                icon={<IconLock size={14} />}
-                                placeholder="Your current password"
-                                {...form.getInputProps('currentPassword')}
-                            />
-
-                            <PasswordInput
-                                label="New password"
-                                icon={<IconLock size={14} />}
-                                placeholder="Update your password"
-                                {...form.getInputProps('newPassword')}
-                            />
-
-                            <PasswordInput
-                                label="Confirm Password"
-                                icon={<IconLock size={14} />}
-                                placeholder="Confirm your new password"
-                                {...form.getInputProps('confirmNewPassword')}
-                            />
-
-                            <Group position="right">
-                                <Button
-                                    leftIcon={<IconEdit size={14} />}
-                                    onClick={onProfileUpdate}
-                                    color="hemmelig"
-                                >
-                                    Update details
-                                </Button>
-                            </Group>
-                        </Stack>
-                    </Container>
                 </Tabs.Panel>
             </Tabs>
         </Container>

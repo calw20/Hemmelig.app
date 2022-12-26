@@ -7,6 +7,7 @@ import helmet from '@fastify/helmet';
 import cors from '@fastify/cors';
 import fstatic from '@fastify/static';
 import jwt from './src/server/decorators/jwt.js';
+import oauthPlugin from '@fastify/oauth2';
 import userFeatures from './src/server/decorators/user-features.js';
 import rateLimit from './src/server/decorators/rate-limit.js';
 import allowedIp from './src/server/decorators/allowed-ip.js';
@@ -19,6 +20,9 @@ import downloadRoute from './src/server/controllers/download.js';
 import secretRoute from './src/server/controllers/secret.js';
 import statsRoute from './src/server/controllers/stats.js';
 import healthzRoute from './src/server/controllers/healthz.js';
+
+import * as redis from './src/server/services/redis.js';
+import validator from 'validator';
 
 const MAX_FILE_BYTES = 1024 * config.get('file.size') * 1000; // Example: 1024 * 2 * 1000 = 2 024 000 bytes
 
@@ -41,16 +45,70 @@ fastify.register(allowedIp);
 fastify.register(attachment);
 fastify.register(keyGeneration);
 
-// Register our routes before the static content
-if (!config.get('user.disabled')) {
-    fastify.register(authenticationRoute, {
-        prefix: '/api/authentication',
-    });
+fastify.register(oauthPlugin, {
+    name: 'oauthPlugin',
+    scope: config.get('auth.scope'),
+    credentials: {
+        client: {
+            id: config.get('auth.id'),
+            secret: config.get('auth.secret'),
+        },
+        auth: {
+            authorizeHost: config.get('auth.authorizeHost'),
+            authorizePath: config.get('auth.authorizePath'),
+            tokenHost: config.get('auth.tokenHost'),
+            tokenPath: config.get('auth.tokenPath'),
+        },
+    },
+    startRedirectPath: config.get('auth.startRedirectPath'),
+    callbackUri: config.get('auth.callbackHost') + config.get('auth.callbackPath'),
+});
 
-    fastify.register(accountRoute, {
-        prefix: '/api/account',
-    });
-}
+fastify.get(config.get('auth.callbackPath'), async (request, reply) => {
+    const userToken = (await fastify.oauthPlugin.getAccessTokenFromAuthorizationCodeFlow(request))
+        .token;
+    const decodedAccessToken = fastify.jwt.decode(userToken.access_token);
+
+    const userData = {
+        username: decodedAccessToken.preferred_username,
+        email: decodedAccessToken.email,
+    };
+
+    const user = await redis.getUser(validator.escape(userData.username));
+
+    if (!user) {
+        //Create the user if not existing
+        const user = await redis.createUser(userData.username, userData.email, ''); //No passwords & can't auth anyway
+    } else if (user.email != userData.email) {
+        //Make sure the email is always correct.
+        const user = await redis.updateUser(userData.email, {
+            email: userData.email,
+        });
+    }
+
+    const token = fastify.jwt.sign(
+        {
+            username: userData.username,
+        },
+        { expiresIn: '7d' }
+    );
+
+    let outDoc = '';
+    outDoc += '<html><body><script>';
+    outDoc += "window.localStorage.setItem('__HEMMELIG_TOKEN', '" + token + "');";
+    outDoc += "window.location.replace('" + config.get('auth.callbackHost') + "');";
+    outDoc += '</script></body></html>';
+
+    return reply.status(200).type('text/html').send(outDoc);
+});
+
+fastify.register(authenticationRoute, {
+    prefix: '/api/authentication',
+});
+
+fastify.register(accountRoute, {
+    prefix: '/api/account',
+});
 
 fastify.register(downloadRoute, { prefix: '/api/download' });
 fastify.register(secretRoute, { prefix: '/api/secret' });
@@ -84,8 +142,6 @@ if (process.env.NODE_ENV !== 'development') {
     fastify.get('/about', serveIndex);
     fastify.get('/privacy', serveIndex);
     fastify.get('/api-docs', serveIndex);
-    fastify.get('/signin', serveIndex);
-    fastify.get('/signup', serveIndex);
     fastify.get('/account', serveIndex);
     fastify.get('/terms', serveIndex);
 }

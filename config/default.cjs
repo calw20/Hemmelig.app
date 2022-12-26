@@ -20,6 +20,16 @@ const {
     SECRET_DO_SPACES_FOLDER = 'localhost.hemmelig.app',
     SECRET_MAX_TEXT_SIZE = 256, // 256 kb
     NODE_ENV = 'development',
+    OAUTH_SCOPES = ['openid'],
+    CLIENT_ID = '<CLIENT ID>',
+    CLIENT_SECRET = '<CLIENT SECRET>',
+    AUTH_HOST = '',
+    AUTH_PATH = '',
+    TOKEN_HOST = '',
+    TOKEN_PATH = '',
+    OAUTH_REDIRECT_PATH = '/signin',
+    OAUTH_CALLBACK_HOST = '',
+    OAUTH_CALLBACK_PATH = '/signin/callback',
 } = process.env;
 
 const config = {
@@ -28,6 +38,19 @@ const config = {
     host: SECRET_HOST,
     port: SECRET_PORT,
     secret_key: SECRET_MASTER_KEY,
+
+    auth: {
+        scope: OAUTH_SCOPES,
+        id: CLIENT_ID,
+        secret: CLIENT_SECRET,
+        authorizeHost: AUTH_HOST,
+        authorizePath: AUTH_PATH,
+        tokenHost: TOKEN_HOST,
+        tokenPath: TOKEN_PATH,
+        startRedirectPath: OAUTH_REDIRECT_PATH,
+        callbackHost: OAUTH_CALLBACK_HOST,
+        callbackPath: OAUTH_CALLBACK_PATH,
+    },
 
     // choose digital ocean/s3 or disk
     file: {

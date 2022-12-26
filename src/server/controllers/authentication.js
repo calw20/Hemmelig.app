@@ -10,7 +10,8 @@ const PASSWORD_LENGTH = 5;
 const USERNAME_LENGTH = 4;
 
 async function authentication(fastify) {
-    fastify.post(
+    //No Login or signup capibiltys for SSO
+    /*fastify.post(
         '/signup',
         {
             preValidation: [fastify.rateLimit],
@@ -91,7 +92,7 @@ async function authentication(fastify) {
         );
 
         return { token };
-    });
+    }); */
 
     fastify.get(
         '/verify',
