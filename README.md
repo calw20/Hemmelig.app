@@ -42,8 +42,6 @@ NOTE: I built this in half a day, I can not vouch for this codebase's security. 
 
 ## Self-hosting
 
-If you have to follow some sort of compliance, and have to self-host, [https://hemmelig.app](https://hemmelig.app) is available as a docker image. The following is the bare minimum to run the docker image.
-
 ```bash
 # To use this image you need a redis database enabled.
 # Example:
@@ -51,17 +49,15 @@ If you have to follow some sort of compliance, and have to self-host, [https://h
 # $ docker run -p 6379:6379 --name some-redis -d redis
 #
 
-docker run -p 3000:3000 -d --name=hemmelig \
-    -e SECRET_REDIS_HOST=127.0.0.1 \
-    -v /var/tmp/hemmelig:/var/tmp/hemmelig/upload/files # this is how you mount a local directory if you choose to use disk upload, and not do/s3
-    hemmeligapp/hemmelig:latest
-```
-
-Alternatively you can use [docker-compose](https://docs.docker.com/compose/):
+You can use [docker-compose](https://docs.docker.com/compose/):
 
 ```bash
-# get docker-compose.yml
-wget https://raw.githubusercontent.com/HemmeligOrg/Hemmelig.app/main/docker-compose.yml
+# get the repo
+git clone https://github.com/calw20/Hemmelig.app.git
+cd Hemmelig.app
+
+# edit docker-compose.yml to add your SSO details
+vi docker-compose.yml
 
 # start hemmelig & redis
 docker-compose up -d
@@ -100,27 +96,20 @@ npx hemmelig --help
 | `SECRET_JWT_SECRET`           | Override this for the secret signin JWT tokens for log in             | good_luck_have_fun |
 | `SECRET_FILE_SIZE`            | Set the total allowed upload file size in mb.                         | 4                  |
 | `SECRET_ENABLE_FILE_UPLOAD`   | Enable or disable file upload                                         | true               |
-| `SECRET_DISABLE_USERS`        | Disable user registration                                            | false              |
+| `SECRET_DISABLE_USERS`        | Disable user registration                                             | false              |
 | `SECRET_FORCED_LANGUAGE`      | Set the default language for the application.                         | en                 |
 | `SECRET_DO_SPACES_ENDPOINT`   | The Digital Ocean Spaces/AWS s3 endpoint                              | ""                 |
 | `SECRET_DO_SPACES_KEY`        | The Digital Ocean Spaces/AWS s3 key                                   | ""                 |
 | `SECRET_DO_SPACES_SECRET`     | The Digital Ocean Spaces/AWS s3 secret                                | ""                 |
 | `SECRET_DO_SPACES_BUCKET`     | The Digital Ocean Spaces/AWS s3 bucket name                           | ""                 |
 | `SECRET_DO_SPACES_FOLDER`     | The Digital Ocean Spaces/AWS s3 folder for the uploaded files         | ""                 |
-| `CLIENT_ID`                   | OpenID Connect Client ID                                              |
-""                 |
-| `CLIENT_SECRET`               | OpenID Connect Client Secret                                          |
-""                 |
-| `AUTH_HOST`                   | Authentication Host                                                   |
-""                 |
-| `AUTH_PATH`                   | Authentication Path                                                   |
-""                 |
-| `TOKEN_HOST`                  | Token Host                                                            |
-""                 |
-| `TOKEN_PATH`                  | Token Path                                                            |
-""                 |
-| `OAUTH_CALLBACK_HOST`         | oAuth Callback Host                                                   |
-""                 |
+| `CLIENT_ID`                   | OpenID Connect Client ID                                              | ""                 |
+| `CLIENT_SECRET`               | OpenID Connect Client Secret                                          | ""                 |
+| `AUTH_HOST`                   | Authentication Host                                                   | ""                 |
+| `AUTH_PATH`                   | Authentication Path                                                   | ""                 |
+| `TOKEN_HOST`                  | Token Host                                                            | ""                 |
+| `TOKEN_PATH`                  | Token Path                                                            | ""                 |
+| `OAUTH_CALLBACK_HOST`         | oAuth Callback Host                                                   | ""                 |
 
 
 ## Supported languages
@@ -141,14 +130,6 @@ npm run dev
 # http://0.0.0.0:3000
 
 ```
-
-## Discord
-[Discord](https://discord.gg/NUkvtKdjs7)
-
-## My lovely contributors
-<a href="https://github.com/HemmeligOrg/Hemmelig.app/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=HemmeligOrg/Hemmelig.app" />
-</a>
 
 ## Contribution
 
